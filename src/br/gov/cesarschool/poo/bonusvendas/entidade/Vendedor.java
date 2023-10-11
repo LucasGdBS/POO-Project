@@ -27,7 +27,7 @@ public class Vendedor implements Serializable{
 	}
 	
 	// Métodos Personalizados
-	int calcularIdade() {
+	public int calcularIdade() {
 		/*calcularIdade(), que calcula e retorna a idade do vendedor em função
 		da data atual (obtê-la do JAVA) e da data de nascimento (que é atributo de
 		vendedor).*/
