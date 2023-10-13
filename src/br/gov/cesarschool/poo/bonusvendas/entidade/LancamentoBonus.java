@@ -28,8 +28,13 @@ public class LancamentoBonus implements Serializable{
 	public LocalDateTime getDataHoraLancamento() {
 		return dataHoraLancamento;
 	}
-	
-	
-	
-	
+
+	// Setters
+	public void setNumeroCaixaDeBonus(long numeroCaixaDeBonus) {
+		this.numeroCaixaDeBonus = numeroCaixaDeBonus;
+	}
+
+	public void setValor(double valor) {
+		this.valor = valor;
+	}
 }

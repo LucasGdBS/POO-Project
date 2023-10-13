@@ -8,5 +8,4 @@ public class LancamentoBonusCredito extends LancamentoBonus{
 		super(numeroCaixaDeBonus, valor, dataHoraLancamento);
 		
 	}
-
 }

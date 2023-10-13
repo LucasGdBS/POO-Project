@@ -9,15 +9,13 @@ public class CaixaDeBonus implements Serializable{
 	private java.time.LocalDateTime dataHoraAtualização;
 	
 	// Constructor
-	public CaixaDeBonus(long numero, double saldo, LocalDateTime dataHoraAtualização) {
+	public CaixaDeBonus(long numero) {
 		super();
 		this.numero = numero;
-		this.saldo = saldo;
-		this.dataHoraAtualização = dataHoraAtualização;
 	}
 	
 	// Métodos personalizados
-	void creditar(double valor) {
+	public void creditar(double valor) {
 		/*deve adicionar ao saldo atual valor, e atualizar
 		dataHoraAtualizacao com a data atual.*/
 		
@@ -25,7 +23,7 @@ public class CaixaDeBonus implements Serializable{
 		dataHoraAtualização = java.time.LocalDateTime.now();
 	}
 	
-	void debitar(double valor) {
+	public void debitar(double valor) {
 		/*deve subtrair do saldo atual valor, e atualizar a
 		dataHoraAtualizacao com a data atual.*/
 		
