@@ -1,9 +1,0 @@
-/**
- * 
- */
-/**
- * 
- */
-module BancoPO {
-	requires PersistenciaObjetos;
-}
