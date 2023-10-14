@@ -9,7 +9,11 @@ public class ValidadorCPF {
 	na Internet e deve ser implementado neste método.*/
 	
 	public static boolean ehCpfValido(String cpf) {
-		if(!StringUtil.ehNuloOuBranco(cpf) || !cpf.matches("\\d{11}")) {
+		if(StringUtil.ehNuloOuBranco(cpf) || cpf.length() != 11){
+			return false;
+		}
+		
+		if (!cpf.matches("[0-9]+")) {
 			return false;
 		}
 		

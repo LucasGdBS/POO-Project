@@ -24,7 +24,7 @@ public class TelaAcumuloResgate {
 	protected Shell shell;
 	
 	private CaixaDeBonusDAO caixaDeBonusDAO = new CaixaDeBonusDAO();
-	private AcumuloResgateMediator mediator = AcumuloResgateMediator.getInstance();
+	private AcumuloResgateMediator mediator = AcumuloResgateMediator.getInstancia();
 
 	private Text txtNumeroCaixa;
 	private Text txtSaldo;

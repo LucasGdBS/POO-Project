@@ -15,7 +15,7 @@ public class CaixaDeBonusDAO {
 		if (buscado != null) {
 			return false;
 		}else {
-			cadastro.incluir(buscado, BRANCO+caixa.getNumero());
+			cadastro.incluir(caixa, BRANCO+caixa.getNumero());
 			return true;
 		}
 	}

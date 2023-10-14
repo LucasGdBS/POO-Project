@@ -7,15 +7,15 @@ import br.gov.cesarschool.poo.bonusvendas.negocio.geral.ValidadorCPF;
 
 public class VendedorMediator {
 	private static VendedorMediator instance;
-	private VendedorDAO repositorioVendedor;
-	private AcumuloResgateMediator caixaDeBonusMediator;
+	VendedorDAO repositorioVendedor;
+	AcumuloResgateMediator caixaDeBonusMediator;
 
-	public VendedorMediator() {
+	VendedorMediator() {
 		repositorioVendedor = new VendedorDAO();
-		caixaDeBonusMediator = AcumuloResgateMediator.getInstance();
+		caixaDeBonusMediator = AcumuloResgateMediator.getInstancia();
 	}
 	
-	public static VendedorMediator getInstance() {
+	public static VendedorMediator getInstancia() {
         if (instance == null) {
             instance = new VendedorMediator();
         }
@@ -23,17 +23,15 @@ public class VendedorMediator {
     }
 	
 	public Vendedor buscar(String cpf) {
-		Vendedor vendedor = repositorioVendedor.buscar(cpf);
-		return vendedor;
+		return repositorioVendedor.buscar(cpf);
 	}
 	
 	private String validar(Vendedor vendedor) {
+		
 		if (StringUtil.ehNuloOuBranco(vendedor.getCpf())) {
 			return "CPF nao informado";
-		}
-		
-		if(!ValidadorCPF.ehCpfValido(vendedor.getCpf())) {
-			return "CPF Invalido";
+		}else if(ValidadorCPF.ehCpfValido(vendedor.getCpf()) == false) {
+			return "CPF invalido";
 		}
 		
 		if(StringUtil.ehNuloOuBranco(vendedor.getNomeCompleto())) {
@@ -45,10 +43,10 @@ public class VendedorMediator {
 		}
 		
 		if(vendedor.getDataNascimento() == null) {
-			return "Data de nascimento invalida";
+			return "Data de nascimento nao informada";
 		}
 		
-		if (vendedor.calcularIdade() > 17) {
+		if (vendedor.calcularIdade() < 18) {
 			return "Data de nascimento invalida";
 		}
 		
@@ -91,21 +89,19 @@ public class VendedorMediator {
 	public ResultadoInclusaoVendedor incluir(Vendedor vendedor) {
 		String validado = validar(vendedor);
 		if (validado == null) {
-			if(buscar(vendedor.getCpf()) != null) {
+			boolean flagIncluido = repositorioVendedor.incluir(vendedor);
+			if (flagIncluido == false) {
 				ResultadoInclusaoVendedor resultado = new ResultadoInclusaoVendedor(0, "Vendedor ja existente");
 				return resultado;
-			}else {
-				long numeroCaixa = caixaDeBonusMediator.gerarCaixaDeBonus(vendedor);
-				if (numeroCaixa == 0) {
-					ResultadoInclusaoVendedor resultado = new ResultadoInclusaoVendedor(numeroCaixa, "Caixa de bonus nao foi gerada");
-					return resultado;
-				}else {
-					repositorioVendedor.incluir(vendedor);
-					ResultadoInclusaoVendedor resultado = new ResultadoInclusaoVendedor(numeroCaixa, null);
-					
-					return resultado;
-				}
 			}
+			long numCaixa = caixaDeBonusMediator.gerarCaixaDeBonus(vendedor);
+			if (numCaixa == 0) {
+				ResultadoInclusaoVendedor resultado = new ResultadoInclusaoVendedor(numCaixa, "Caixa de bonus nao foi gerada");
+				return resultado;
+			}
+			// Caso de sucesso
+			ResultadoInclusaoVendedor resultado = new ResultadoInclusaoVendedor(numCaixa, null);
+			return resultado;
 		}else {
 			ResultadoInclusaoVendedor resultado = new ResultadoInclusaoVendedor(0, validado);
 			return resultado;
@@ -114,12 +110,16 @@ public class VendedorMediator {
 	
 	public String alterar(Vendedor vendedor) {
 		String validado = validar(vendedor);
-		if(validado == null && buscar(vendedor.getCpf()) == null) {
-			repositorioVendedor.alterar(vendedor);
-			return null;
+		if(validado == null) {
+			if ( buscar(vendedor.getCpf()) == null){
+				return "Vendedor inexistente";
+			}else {
+				repositorioVendedor.alterar(vendedor);
+				return null;
+			}
 		}else {
 			return "Vendedor inexistente";
 		}
-	}
+    }
 	
 }

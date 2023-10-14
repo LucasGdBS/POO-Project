@@ -15,7 +15,7 @@ public class VendedorDAO {
 		if (buscado != null) {
 			return false;
 		}else {
-			cadastro.incluir(buscado, BRANCO+vend.getCpf());
+			cadastro.incluir(vend, BRANCO+vend.getCpf());
 			return true;
 		}
 	}

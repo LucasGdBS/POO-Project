@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Combo;
 public class TelaManutencaoVendedor {
 
 	protected Shell shell;
-	private VendedorMediator mediator = VendedorMediator.getInstance();
+	private VendedorMediator mediator = VendedorMediator.getInstancia();
 	private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
 	private Text txtCpf;
 	private Text txtNomeCompleto;

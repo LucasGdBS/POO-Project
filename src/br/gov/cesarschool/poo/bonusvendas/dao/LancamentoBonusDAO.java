@@ -22,7 +22,7 @@ public class LancamentoBonusDAO {
 		if (buscado != null) {
 			return false;
 		}else {
-			cadastro.incluir(buscado, BRANCO+identificador(bonus));
+			cadastro.incluir(bonus, BRANCO+identificador(bonus));
 			return true;
 		}
 	}
