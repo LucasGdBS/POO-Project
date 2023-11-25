@@ -1,6 +1,6 @@
 package br.gov.cesarschool.poo.bonusvendas.entidade.geral;
 import java.io.Serializable;
 
-public class Registro implements Serializable{
-	
+public abstract class Registro implements Serializable{
+	public abstract String getIdUnico();
 }
