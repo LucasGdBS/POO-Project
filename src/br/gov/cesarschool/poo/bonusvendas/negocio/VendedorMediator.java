@@ -7,21 +7,29 @@ import br.gov.cesarschool.poo.bonusvendas.dao.VendedorDAO;
 import br.gov.cesarschool.poo.bonusvendas.entidade.Vendedor;
 import br.gov.cesarschool.poo.bonusvendas.negocio.geral.StringUtil;
 import br.gov.cesarschool.poo.bonusvendas.negocio.geral.ValidadorCPF;
+import br.gov.cesarschool.poo.bonusvendas.util.Ordenadora;
 
 public class VendedorMediator {
 	private static VendedorMediator instancia;
+	
 	public static VendedorMediator getInstancia() {
 		if (instancia == null) {
 			instancia = new VendedorMediator();
 		}
 		return instancia;
 	}
+	
 	private VendedorDAO repositorioVendedor;
 	private AcumuloResgateMediator caixaDeBonusMediator;
+	private ComparadorVendedorNome comparadorVendedorNome;
+	private ComparadorVendedorRenda comparadorVendedorRenda;
 	private VendedorMediator() {
 		repositorioVendedor = new VendedorDAO();
 		caixaDeBonusMediator = AcumuloResgateMediator.getInstancia();
+		comparadorVendedorNome = ComparadorVendedorNome.getInstance();
+		comparadorVendedorRenda = ComparadorVendedorRenda.getInstance();
 	}
+	
 	public ResultadoInclusaoVendedor incluir(Vendedor vendedor) {
 		long numeroCaixaBonus = 0;
 		String msg = validar(vendedor);
@@ -48,6 +56,7 @@ public class VendedorMediator {
 		}
 		return msg;
 	}
+	
 	private String validar(Vendedor vendedor) {
 		if (StringUtil.ehNuloOuBranco(vendedor.getCpf())) {
 			return "CPF nao informado";
@@ -96,5 +105,21 @@ public class VendedorMediator {
 	private boolean dataNascimentoInvalida(LocalDate dataNasc) {
 		long yearsDifference = ChronoUnit.YEARS.between(dataNasc, LocalDate.now());
 		return yearsDifference < 17;
+	}
+	
+	public Vendedor[] gerarListagemClienteOrdenadaPorNome() {
+		Vendedor[] vendedores = repositorioVendedor.buscarTodos();
+		Ordenadora.ordenar(vendedores, comparadorVendedorNome);
+		
+		return vendedores;
+		
+	}
+	
+	public Vendedor[] gerarListagemClienteOrdenadaPorRenda() {
+		Vendedor[] vendedores = repositorioVendedor.buscarTodos();
+		Ordenadora.ordenar(vendedores, comparadorVendedorRenda);
+		
+		return vendedores;
+		
 	}
 }
