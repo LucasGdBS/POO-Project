@@ -3,6 +3,7 @@ package br.gov.cesarschool.poo.bonusvendas.negocio;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 import br.gov.cesarschool.poo.bonusvendas.dao.CaixaDeBonusDAO;
 import br.gov.cesarschool.poo.bonusvendas.dao.LancamentoBonusDAO;
@@ -11,23 +12,28 @@ import br.gov.cesarschool.poo.bonusvendas.entidade.LancamentoBonusCredito;
 import br.gov.cesarschool.poo.bonusvendas.entidade.LancamentoBonusDebito;
 import br.gov.cesarschool.poo.bonusvendas.entidade.TipoResgate;
 import br.gov.cesarschool.poo.bonusvendas.entidade.Vendedor;
+import br.gov.cesarschool.poo.bonusvendas.util.Ordenadora;
 
 public class AcumuloResgateMediator {
 	private static final String CAIXA_DE_BONUS_INEXISTENTE = "Caixa de bonus inexistente";
 	private static final String VALOR_MENOR_OU_IGUAL_A_ZERO = "Valor menor ou igual a zero";
+	
 	private static AcumuloResgateMediator instancia;
+	
 	public static AcumuloResgateMediator getInstancia() {
 		if (instancia == null) {
 			instancia = new AcumuloResgateMediator();
 		}
 		return instancia;
 	}
+	
 	private CaixaDeBonusDAO repositorioCaixaDeBonus;
 	private LancamentoBonusDAO repositorioLancamento;
 	private AcumuloResgateMediator() {
 		repositorioCaixaDeBonus = new CaixaDeBonusDAO();
 		repositorioLancamento = new LancamentoBonusDAO();
 	}
+	
 	public long gerarCaixaDeBonus(Vendedor vendedor) {
 		LocalDate dataAtual = LocalDate.now();
 		DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -41,6 +47,7 @@ public class AcumuloResgateMediator {
 			return 0;
 		}		 
 	}
+	
 	public String acumularBonus(long numeroCaixaDeBonus, double valor) {
 		if (valor <= 0) {
 			return VALOR_MENOR_OU_IGUAL_A_ZERO; 
@@ -55,6 +62,7 @@ public class AcumuloResgateMediator {
 		repositorioLancamento.incluir(lancamento);
 		return null;
 	}
+	
 	public String resgatar(long numeroCaixaDeBonus, double valor, TipoResgate tipoResgate) {
 		if (valor <= 0) {
 			return VALOR_MENOR_OU_IGUAL_A_ZERO; 
@@ -72,4 +80,17 @@ public class AcumuloResgateMediator {
 		repositorioLancamento.incluir(lancamento);
 		return null;
 	}
+	
+	public CaixaDeBonus[] listaCaixaDeBonusPorSaldoMaior(double saldoInicial) {
+		CaixaDeBonus[] todasAsCaixas = repositorioCaixaDeBonus.buscarTodos();
+		
+		CaixaDeBonus[] caixasFiltradas = Arrays.stream(todasAsCaixas)
+                .filter(caixa -> caixa.getSaldo() >= saldoInicial)
+                .toArray(CaixaDeBonus[]::new);
+		
+		Ordenadora.ordenar(caixasFiltradas, ComparadorCaixaDeBonusSaldoDec.getInstance());
+		
+		return caixasFiltradas;
+	}
+	
 }
