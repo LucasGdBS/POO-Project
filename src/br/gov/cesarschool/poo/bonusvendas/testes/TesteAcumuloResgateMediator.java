@@ -70,8 +70,8 @@ public class TesteAcumuloResgateMediator extends TesteGeral {
 		Assertions.assertNotNull(caixaBonusNova);
 		Assertions.assertEquals(caixaBonusNova.getNumero(), cbRef.getNumero());
 		Assertions.assertEquals(caixaBonusNova.getSaldo(), cbRef.getSaldo());	
-		// A data hora atualizaï¿½ï¿½o deve ser a data hora atual, atribuï¿½da ao atributo dataHoraAtualizacao
-		// da CaixaDeBonus no construtor desta.  Nï¿½o ï¿½ um atributo controlado pelo usuï¿½rio nem pelo mediator. 
+		// A data hora atualização deve ser a data hora atual, atribuída ao atributo dataHoraAtualizacao
+		// da CaixaDeBonus no construtor desta.  Não é um atributo controlado pelo usuário nem pelo mediator. 
 		Assertions.assertNotNull(caixaBonusNova.getDataHoraAtualizacao());
 	}
 	

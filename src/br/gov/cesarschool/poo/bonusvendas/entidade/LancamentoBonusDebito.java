@@ -13,9 +13,5 @@ public class LancamentoBonusDebito extends LancamentoBonus {
 
 	public TipoResgate getTipoResgate() {
 		return tipoResgate;
-	}
-	
-	
-	
-	
+	} 	
 }
