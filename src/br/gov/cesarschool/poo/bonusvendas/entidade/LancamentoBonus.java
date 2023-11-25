@@ -1,9 +1,12 @@
 package br.gov.cesarschool.poo.bonusvendas.entidade;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
-public class LancamentoBonus implements Serializable {
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import br.gov.cesarschool.poo.bonusvendas.entidade.geral.Registro;
+
+public class LancamentoBonus extends Registro {
 	private long numeroCaixaDeBonus;
 	private double valor; 
 	private LocalDateTime dataHoraLancamento;
@@ -13,6 +16,13 @@ public class LancamentoBonus implements Serializable {
 		this.valor = valor;
 		this.dataHoraLancamento = dataHoraLancamento;
 	}
+	
+	@Override
+	public String getIdUnico() {
+		DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+		return this.getNumeroCaixaDeBonus() + this.getDataHoraLancamento().format(customFormatter);
+	}
+	
 	public long getNumeroCaixaDeBonus() {
 		return numeroCaixaDeBonus;
 	}
