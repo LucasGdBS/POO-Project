@@ -7,11 +7,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="lib/PersistenciaObjetos.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/lucas/OneDrive/Área de Trabalho/DEV/3 Periodo/POO/PooCesar/Atividade continuada/ProjetoPOO/lib/oblesqbom.jar"/>
+	<classpathentry kind="lib" path="lib/oblesqbom.jar"/>
+	<classpathentry kind="lib" path="lib/PersistenciaObjetos.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
