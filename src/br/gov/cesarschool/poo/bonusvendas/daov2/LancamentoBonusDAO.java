@@ -1,29 +1,30 @@
 package br.gov.cesarschool.poo.bonusvendas.daov2;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-import br.edu.cesarschool.next.oo.persistenciaobjetos.CadastroObjetos;
 import br.gov.cesarschool.poo.bonusvendas.entidade.LancamentoBonus;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoObjetoJaExistente;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoObjetoNaoExistente;
 
 public class LancamentoBonusDAO {
 	private DAOGenerico dao;
 	
 	public LancamentoBonusDAO() {
-		dao = new DAOGenerico(LancamentoBonus.class);
+		dao = new DAOGenerico(LancamentoBonus.class, "Lancamento");
 	}
 	
-	public boolean incluir(LancamentoBonus lancamento) {
-		return dao.incluir(lancamento); 
+	public void incluir(LancamentoBonus lancamento) throws ExcecaoObjetoJaExistente{
+		dao.incluir(lancamento); 
 	}
 	
-	public boolean alterar(LancamentoBonus lancamento) {
-		return dao.alterar(lancamento);	
+	public void alterar(LancamentoBonus lancamento) throws ExcecaoObjetoNaoExistente{
+		dao.alterar(lancamento);	
 	}
-	public LancamentoBonus buscar(String codigo) {
+	
+	public LancamentoBonus buscar(String codigo) throws ExcecaoObjetoNaoExistente {
 		return (LancamentoBonus)dao.buscar(codigo);
 	}
+	
 	public LancamentoBonus[] buscarTodos() {
 		Serializable[] rets = dao.buscarTodos();
 		LancamentoBonus[] lancamentos = new LancamentoBonus[rets.length];
