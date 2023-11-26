@@ -3,7 +3,10 @@ package br.gov.cesarschool.poo.bonusvendas.negocio;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import br.gov.cesarschool.poo.bonusvendas.dao.CaixaDeBonusDAO;
 import br.gov.cesarschool.poo.bonusvendas.dao.LancamentoBonusDAO;
@@ -70,7 +73,7 @@ public class AcumuloResgateMediator {
 		} 
 		CaixaDeBonus caixa = repositorioCaixaDeBonus.buscar(numeroCaixaDeBonus);
 		if (caixa == null) {
-			return CAIXA_DE_BONUS_INEXISTENTE;
+			return CAIXA_DE_BONUS_INEXISTENTE;	
 		} 
 		if (caixa.getSaldo() < valor) {
 			return "Saldo insuficiente";
@@ -95,18 +98,20 @@ public class AcumuloResgateMediator {
 	}
 	
 	public LancamentoBonus[] listaLancamentosPorFaixaData(LocalDate d1, LocalDate d2) {
-		LancamentoBonus[] todosOsLancamentos = repositorioLancamento.buscarTodos();
-		
-		LancamentoBonus[] lancamentosFiltrados = Arrays.stream(todosOsLancamentos)
-                .filter(lancamento -> {
-                    LocalDate dataHoraLancamento = lancamento.getDataHoraLancamento().toLocalDate();
-                    return !dataHoraLancamento.isBefore(d1) && !dataHoraLancamento.isAfter(d2);
-                })
-                .toArray(LancamentoBonus[]::new);
-		
-		Arrays.sort(lancamentosFiltrados, ComparadorLancamentoBonusDHDec.getInstance());
-		
-		return lancamentosFiltrados;
-	}
+        LancamentoBonus[] todosOsLancamentos = repositorioLancamento.buscarTodos();
+
+        List<LancamentoBonus> lancamentosFiltrados = new ArrayList<>();
+
+        for (LancamentoBonus lancamento : todosOsLancamentos) {
+            LocalDate dataHoraLancamento = lancamento.getDataHoraLancamento().toLocalDate();
+            if (!dataHoraLancamento.isBefore(d1) && !dataHoraLancamento.isAfter(d2)) {
+                lancamentosFiltrados.add(lancamento);
+            }
+        }
+
+        Collections.sort(lancamentosFiltrados, ComparadorLancamentoBonusDHDec.getInstance());
+
+        return lancamentosFiltrados.toArray(new LancamentoBonus[0]);
+    }
 	
 }
