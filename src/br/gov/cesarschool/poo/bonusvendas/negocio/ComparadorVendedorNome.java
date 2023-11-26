@@ -19,12 +19,12 @@ public class ComparadorVendedorNome implements Comparador{
 		Vendedor vendedor1 = (Vendedor) o1;
         Vendedor vendedor2 = (Vendedor) o2;
         
-        int compare = vendedor1.getNomeCompleto().compareTo(vendedor2.getNomeCompleto());
+        float compare = vendedor1.getNomeCompleto().compareTo(vendedor2.getNomeCompleto());
         if (compare > 0){
         	return 1;
-        }else if (compare == 0) {
-        	return 0;
+        }else if (compare < 0) {
+        	return -1;
         }
-        return -1;
+        return 0;
 	}
 }
