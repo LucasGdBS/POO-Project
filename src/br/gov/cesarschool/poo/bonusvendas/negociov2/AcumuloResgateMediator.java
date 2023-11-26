@@ -8,14 +8,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import br.gov.cesarschool.poo.bonusvendas.dao.CaixaDeBonusDAO;
-import br.gov.cesarschool.poo.bonusvendas.dao.LancamentoBonusDAO;
+import br.gov.cesarschool.poo.bonusvendas.daov2.CaixaDeBonusDAO;
+import br.gov.cesarschool.poo.bonusvendas.daov2.LancamentoBonusDAO;
 import br.gov.cesarschool.poo.bonusvendas.entidade.CaixaDeBonus;
 import br.gov.cesarschool.poo.bonusvendas.entidade.LancamentoBonus;
 import br.gov.cesarschool.poo.bonusvendas.entidade.LancamentoBonusCredito;
 import br.gov.cesarschool.poo.bonusvendas.entidade.LancamentoBonusDebito;
 import br.gov.cesarschool.poo.bonusvendas.entidade.TipoResgate;
 import br.gov.cesarschool.poo.bonusvendas.entidade.Vendedor;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoObjetoJaExistente;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoObjetoNaoExistente;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoValidacao;
 import br.gov.cesarschool.poo.bonusvendas.negocio.ComparadorCaixaDeBonusSaldoDec;
 import br.gov.cesarschool.poo.bonusvendas.negocio.ComparadorLancamentoBonusDHDec;
 import br.gov.cesarschool.poo.bonusvendas.util.Ordenadora;
@@ -40,51 +43,54 @@ public class AcumuloResgateMediator {
 		repositorioLancamento = new LancamentoBonusDAO();
 	}
 	
-	public long gerarCaixaDeBonus(Vendedor vendedor) {
+	public long gerarCaixaDeBonus(Vendedor vendedor) throws ExcecaoObjetoJaExistente{
 		LocalDate dataAtual = LocalDate.now();
 		DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		long numero = Long.parseLong(vendedor.getCpf().substring(0, 9) + 
 				dataAtual.format(customFormatter));
 		CaixaDeBonus caixa = new CaixaDeBonus(numero);
-		boolean ret = repositorioCaixaDeBonus.incluir(caixa);
-		if (ret) {
-			return numero;
-		} else {
-			return 0;
-		}		 
+		
+		repositorioCaixaDeBonus.incluir(caixa);
+		
+		return caixa.getNumero();
+			
 	}
 	
-	public String acumularBonus(long numeroCaixaDeBonus, double valor) {
+	public void acumularBonus(long numeroCaixaDeBonus, double valor) throws ExcecaoObjetoNaoExistente, ExcecaoValidacao{
 		if (valor <= 0) {
-			return VALOR_MENOR_OU_IGUAL_A_ZERO; 
+			throw new ExcecaoValidacao(VALOR_MENOR_OU_IGUAL_A_ZERO);
 		} 
 		CaixaDeBonus caixa = repositorioCaixaDeBonus.buscar(numeroCaixaDeBonus);
-		if (caixa == null) {
-			return CAIXA_DE_BONUS_INEXISTENTE;
-		} 
+		
 		caixa.creditar(valor);
 		repositorioCaixaDeBonus.alterar(caixa);
 		LancamentoBonusCredito lancamento = new LancamentoBonusCredito(numeroCaixaDeBonus, valor, LocalDateTime.now());
-		repositorioLancamento.incluir(lancamento);
-		return null;
+		try {
+			repositorioLancamento.incluir(lancamento);			
+		} catch (ExcecaoObjetoJaExistente e) {
+			throw new ExcecaoValidacao("Inconsistencia no cadastro de lancamento");
+		}
+		
 	}
 	
-	public String resgatar(long numeroCaixaDeBonus, double valor, TipoResgate tipoResgate) {
+	public void resgatar(long numeroCaixaDeBonus, double valor, TipoResgate tipoResgate) throws ExcecaoObjetoNaoExistente, ExcecaoValidacao{
 		if (valor <= 0) {
-			return VALOR_MENOR_OU_IGUAL_A_ZERO; 
+			throw new ExcecaoValidacao(VALOR_MENOR_OU_IGUAL_A_ZERO);
 		} 
 		CaixaDeBonus caixa = repositorioCaixaDeBonus.buscar(numeroCaixaDeBonus);
-		if (caixa == null) {
-			return CAIXA_DE_BONUS_INEXISTENTE;	
-		} 
+
 		if (caixa.getSaldo() < valor) {
-			return "Saldo insuficiente";
+			throw new ExcecaoValidacao("Saldo insuficiente");
 		}
 		caixa.debitar(valor);
 		repositorioCaixaDeBonus.alterar(caixa);
 		LancamentoBonusDebito lancamento = new LancamentoBonusDebito(numeroCaixaDeBonus, valor, LocalDateTime.now(), tipoResgate);
-		repositorioLancamento.incluir(lancamento);
-		return null;
+		try {
+			repositorioLancamento.incluir(lancamento);			
+		} catch (ExcecaoObjetoJaExistente e) {
+			throw new ExcecaoValidacao("Inconsistencia no cadastro de lancamento");
+		}
+		
 	}
 	
 	public CaixaDeBonus[] listaCaixaDeBonusPorSaldoMaior(double saldoInicial) {
