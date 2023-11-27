@@ -17,24 +17,21 @@ public class DAOGenerico {
 	}
 	
 	public void incluir(Registro reg) throws ExcecaoObjetoJaExistente{
-		Registro busca = null;
 		try {
-			busca = buscar(reg.getIdUnico());
-		} catch (ExcecaoObjetoNaoExistente e) {
-			e.printStackTrace();
-		}
-		if (busca != null) {
+			buscar(reg.getIdUnico());
 			throw new ExcecaoObjetoJaExistente(nomeEntidade + " ja existente");
+		} catch (ExcecaoObjetoNaoExistente e) {
+			cadastro.incluir(reg, reg.getIdUnico());
 		}
-		cadastro.incluir(reg, reg.getIdUnico());
 	}
 	
 	public void alterar(Registro reg) throws ExcecaoObjetoNaoExistente{
-		Registro busca = buscar(reg.getIdUnico());
-		if (busca == null) {
-			throw new ExcecaoObjetoNaoExistente(nomeEntidade + " nao existente");
+		try {
+			buscar(reg.getIdUnico());
+			cadastro.alterar(reg, reg.getIdUnico());			
+		}catch (ExcecaoObjetoNaoExistente e){
+			throw new ExcecaoObjetoNaoExistente(nomeEntidade + " nao existente");			
 		}
-		cadastro.alterar(reg, reg.getIdUnico());
 	}
 	
 	public Registro buscar(String id) throws ExcecaoObjetoNaoExistente {

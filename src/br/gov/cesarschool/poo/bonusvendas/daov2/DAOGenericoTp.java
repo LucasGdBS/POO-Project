@@ -17,24 +17,21 @@ public class DAOGenericoTp<T extends Registro> {
     }
 
     public void incluir(T reg) throws ExcecaoObjetoJaExistente {
-        T busca = null;
         try {
-            busca = buscar(reg.getIdUnico());
-        } catch (ExcecaoObjetoNaoExistente e) {
-            e.printStackTrace();
-        }
-        if (busca != null) {
+            buscar(reg.getIdUnico());
             throw new ExcecaoObjetoJaExistente(nomeEntidade + " ja existente");
+        } catch (ExcecaoObjetoNaoExistente e) {
+            cadastro.incluir(reg, reg.getIdUnico());
         }
-        cadastro.incluir(reg, reg.getIdUnico());
     }
 
     public void alterar(T reg) throws ExcecaoObjetoNaoExistente {
-        T busca = buscar(reg.getIdUnico());
-        if (busca == null) {
-            throw new ExcecaoObjetoNaoExistente(nomeEntidade + " nao existente");
-        }
-        cadastro.alterar(reg, reg.getIdUnico());
+    	try {
+			buscar(reg.getIdUnico());
+			cadastro.alterar(reg, reg.getIdUnico());			
+		}catch (ExcecaoObjetoNaoExistente e){
+			throw new ExcecaoObjetoNaoExistente(nomeEntidade + " nao existente");			
+		}
     }
 
     public T buscar(String id) throws ExcecaoObjetoNaoExistente {
